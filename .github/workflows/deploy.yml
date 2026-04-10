@@ -33,10 +33,10 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: "https://rhhaojpsqfbapltcvsbz.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoaGFvanBzcWZiYXBsdGN2c2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwNDk1MjksImV4cCI6MjA4NTYyNTUyOX0.pubBH-c62Omwz1U4gXvdFYU0DR0jd2eAJ2biDxvAqMU"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_BASE_PATH: ""
-          NEXT_PUBLIC_SITE_URL: "https://admin.fridgenie.app"
+          NEXT_PUBLIC_SITE_URL: "https://admin.fridgenie.app"}
 
       - name: Copy CNAME to dist
         run: cp CNAME dist/CNAME
