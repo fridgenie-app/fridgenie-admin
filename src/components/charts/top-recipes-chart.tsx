@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { chartColors, tooltipStyle } from "@/lib/chart-theme";
 
 interface RecipeData {
   name: string;
@@ -30,30 +31,23 @@ export function TopRecipesChart({ data }: TopRecipesChartProps) {
         {data === null ? (
           <Skeleton className="h-[300px] w-full" />
         ) : data.length === 0 ? (
-          <div className="flex h-[300px] items-center justify-center text-slate-500">
+          <div className="flex h-[300px] items-center justify-center text-bark/40">
             No recipe data yet
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
-              <XAxis type="number" stroke="#94a3b8" fontSize={12} allowDecimals={false} />
+              <XAxis type="number" stroke={chartColors.axis} fontSize={12} allowDecimals={false} />
               <YAxis
                 type="category"
                 dataKey="name"
-                stroke="#94a3b8"
+                stroke={chartColors.axis}
                 fontSize={12}
                 width={150}
                 tickFormatter={(v) => (v.length > 20 ? v.slice(0, 20) + "..." : v)}
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #334155",
-                  borderRadius: "8px",
-                  color: "#f1f5f9",
-                }}
-              />
-              <Bar dataKey="count" fill="#EF5350" radius={[0, 4, 4, 0]} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="count" fill={chartColors.forest} radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

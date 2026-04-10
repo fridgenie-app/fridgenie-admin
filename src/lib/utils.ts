@@ -58,3 +58,31 @@ export function exportToCsv(data: Record<string, unknown>[], filename: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+export function exportToExcel(data: Record<string, unknown>[], filename: string) {
+  if (data.length === 0) return;
+  // Dynamic import to avoid SSR issues
+  import("xlsx").then((XLSX) => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+    XLSX.writeFile(workbook, filename);
+  });
+}
+
+export async function exportToPdf(elementId: string, filename: string) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  const html2canvas = (await import("html2canvas")).default;
+  const { jsPDF } = await import("jspdf");
+
+  const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#F5F5DC" });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("landscape", "mm", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  pdf.save(filename);
+}

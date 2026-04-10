@@ -125,6 +125,9 @@ export interface DashboardMetrics {
   recipesCooked: number;
   avgItemsPerHousehold: number;
   avgRecipesPerUser: number;
+  dau?: number;
+  wau?: number;
+  mau?: number;
 }
 
 export interface UserRow {
@@ -153,4 +156,27 @@ export interface ActivityItem {
   description: string;
   user_email?: string;
   timestamp: string;
+}
+
+export interface RetentionCohort {
+  cohort_date: string;
+  total_users: number;
+  week1: number;
+  week2: number;
+  week3: number;
+  week4: number;
+}
+
+export interface FeatureUsageStat {
+  feature_name: string;
+  count: number;
+  last_used: string | null;
+}
+
+export interface ReportSchedule {
+  id: string;
+  report_type: string;
+  frequency: "daily" | "weekly" | "monthly";
+  email: string;
+  created_at: string;
 }

@@ -3,6 +3,7 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GHIBLI_PALETTE, tooltipStyle } from "@/lib/chart-theme";
 
 interface SizeData {
   name: string;
@@ -12,8 +13,6 @@ interface SizeData {
 interface HouseholdSizeChartProps {
   data: SizeData[] | null;
 }
-
-const COLORS = ["#E53935", "#EF5350", "#F44336", "#E57373", "#EF9A9A", "#FFCDD2", "#FF8A80", "#FF5252"];
 
 export function HouseholdSizeChart({ data }: HouseholdSizeChartProps) {
   return (
@@ -25,7 +24,7 @@ export function HouseholdSizeChart({ data }: HouseholdSizeChartProps) {
         {data === null ? (
           <Skeleton className="h-[300px] w-full" />
         ) : data.length === 0 ? (
-          <div className="flex h-[300px] items-center justify-center text-slate-500">
+          <div className="flex h-[300px] items-center justify-center text-bark/40">
             No household data yet
           </div>
         ) : (
@@ -44,19 +43,12 @@ export function HouseholdSizeChart({ data }: HouseholdSizeChartProps) {
                 }
               >
                 {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={GHIBLI_PALETTE[index % GHIBLI_PALETTE.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #334155",
-                  borderRadius: "8px",
-                  color: "#f1f5f9",
-                }}
-              />
+              <Tooltip contentStyle={tooltipStyle} />
               <Legend
-                wrapperStyle={{ color: "#94a3b8", fontSize: 12 }}
+                wrapperStyle={{ color: "#5D4037", fontSize: 12 }}
               />
             </PieChart>
           </ResponsiveContainer>

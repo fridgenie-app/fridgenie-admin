@@ -118,8 +118,8 @@ export default function UsersPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Users</h1>
-            <p className="mt-1 text-slate-400">
+            <h1 className="font-heading text-3xl font-bold text-bark">Users</h1>
+            <p className="mt-1 text-bark/60">
               Manage and view all Fridgenie users
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function UsersPage() {
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-bark/40" />
                 <Input
                   placeholder="Search by email or name..."
                   value={search}
@@ -141,7 +141,7 @@ export default function UsersPage() {
                   className="pl-9"
                 />
               </div>
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-bark/60">
                 {filtered?.length ?? 0} users
               </span>
             </div>
@@ -169,7 +169,7 @@ export default function UsersPage() {
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-slate-500">
+                      <TableCell colSpan={7} className="text-center text-bark/40">
                         No users found
                       </TableCell>
                     </TableRow>
@@ -178,10 +178,10 @@ export default function UsersPage() {
                       <TableRow key={user.id}>
                         <TableCell>
                           <div>
-                            <div className="font-medium text-white">
+                            <div className="font-medium text-bark">
                               {user.display_name || "No name"}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-bark/40">
                               {user.email}
                             </div>
                           </div>

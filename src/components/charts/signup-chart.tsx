@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { chartColors, tooltipStyle } from "@/lib/chart-theme";
 
 interface DataPoint {
   date: string;
@@ -33,10 +34,10 @@ export function SignupChart({ data }: SignupChartProps) {
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
               <XAxis
                 dataKey="date"
-                stroke="#94a3b8"
+                stroke={chartColors.axis}
                 fontSize={12}
                 tickFormatter={(v) =>
                   new Date(v).toLocaleDateString("en-US", {
@@ -45,14 +46,9 @@ export function SignupChart({ data }: SignupChartProps) {
                   })
                 }
               />
-              <YAxis stroke="#94a3b8" fontSize={12} allowDecimals={false} />
+              <YAxis stroke={chartColors.axis} fontSize={12} allowDecimals={false} />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #334155",
-                  borderRadius: "8px",
-                  color: "#f1f5f9",
-                }}
+                contentStyle={tooltipStyle}
                 labelFormatter={(v) =>
                   new Date(v).toLocaleDateString("en-US", {
                     month: "long",
@@ -64,9 +60,9 @@ export function SignupChart({ data }: SignupChartProps) {
               <Line
                 type="monotone"
                 dataKey="count"
-                stroke="#E53935"
+                stroke={chartColors.forest}
                 strokeWidth={2}
-                dot={{ fill: "#E53935", r: 3 }}
+                dot={{ fill: chartColors.forest, r: 3 }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

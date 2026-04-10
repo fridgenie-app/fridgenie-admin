@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MetricCard } from "@/components/ui/metric-card";
+import { LiveIndicator } from "@/components/ui/live-indicator";
 import { SignupChart } from "@/components/charts/signup-chart";
 import { ItemsChart } from "@/components/charts/items-chart";
 import { TopRecipesChart } from "@/components/charts/top-recipes-chart";
 import { HouseholdSizeChart } from "@/components/charts/household-size-chart";
 import { supabase } from "@/lib/supabase";
+import { useRealtime } from "@/lib/use-realtime";
+import { showToast } from "@/components/ui/toast";
 import { Users, Home, Package, ChefHat, TrendingUp, BarChart3 } from "lucide-react";
 import type { DashboardMetrics } from "@/types/database";
 
@@ -25,6 +28,30 @@ export default function OverviewPage() {
     fetchTopRecipes();
     fetchHouseholdSizes();
   }, []);
+
+  const handleProfileChange = useCallback(() => {
+    showToast("New user signed up!");
+    setMetrics((prev) => prev ? { ...prev, totalUsers: prev.totalUsers + 1 } : prev);
+  }, []);
+
+  const handleItemChange = useCallback(() => {
+    showToast("New item added to a pantry");
+    setMetrics((prev) => prev ? { ...prev, totalItems: prev.totalItems + 1 } : prev);
+  }, []);
+
+  const { connected: profilesConnected } = useRealtime({
+    table: "profiles",
+    event: "INSERT",
+    onRecord: handleProfileChange,
+  });
+
+  const { connected: itemsConnected } = useRealtime({
+    table: "pantry_items",
+    event: "INSERT",
+    onRecord: handleItemChange,
+  });
+
+  const liveConnected = profilesConnected || itemsConnected;
 
   async function fetchMetrics() {
     const [profilesRes, householdsRes, itemsRes, recipesRes] = await Promise.all([
@@ -166,11 +193,14 @@ export default function OverviewPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
-          <p className="mt-1 text-slate-400">
-            Key metrics and analytics for Fridgenie
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-heading text-3xl font-bold text-bark">Dashboard Overview</h1>
+            <p className="mt-1 text-bark/60">
+              Key metrics and analytics for Fridgenie
+            </p>
+          </div>
+          <LiveIndicator connected={liveConnected} />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">

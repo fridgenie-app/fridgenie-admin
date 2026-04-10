@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/auth-context";
 import { Sidebar } from "./sidebar";
+import { ToastContainer } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -17,10 +18,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="flex h-screen items-center justify-center bg-cream">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-red border-t-transparent" />
-          <p className="text-sm text-slate-400">Loading...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-forest border-t-transparent" />
+          <p className="text-sm text-bark/60">Loading...</p>
         </div>
       </div>
     );
@@ -29,11 +30,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-cream">
       <Sidebar />
       <main className="pl-64">
         <div className="p-8">{children}</div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

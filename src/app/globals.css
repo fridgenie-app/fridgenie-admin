@@ -2,13 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  color-scheme: dark;
-}
-
 body {
-  background-color: #020617;
-  color: #f1f5f9;
+  background-color: #F5F5DC;
+  color: #3E2723;
 }
 
 /* Custom scrollbar */
@@ -18,14 +14,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #EDE8D0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #A5D6A7;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #81C784;
 }

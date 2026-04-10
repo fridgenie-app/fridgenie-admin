@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableHeader,
@@ -14,8 +15,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/lib/supabase";
-import { formatDate } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { formatDate, exportToCsv } from "@/lib/utils";
+import { Search, Download } from "lucide-react";
 import type { HouseholdRow } from "@/types/database";
 
 export default function HouseholdsPage() {
@@ -75,21 +76,41 @@ export default function HouseholdsPage() {
     return households.filter((h) => h.name.toLowerCase().includes(q));
   }, [households, search]);
 
+  function handleExport() {
+    if (!filtered) return;
+    exportToCsv(
+      filtered.map((h) => ({
+        name: h.name,
+        created_at: h.created_at,
+        members: h.member_count,
+        pantry_items: h.items_count,
+        recipes_cooked: h.recipes_cooked,
+      })),
+      "fridgenie-households.csv"
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Households</h1>
-          <p className="mt-1 text-slate-400">
-            View all Fridgenie households and their activity
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-heading text-3xl font-bold text-bark">Households</h1>
+            <p className="mt-1 text-bark/60">
+              View all Fridgenie households and their activity
+            </p>
+          </div>
+          <Button variant="secondary" onClick={handleExport} disabled={!filtered}>
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
         </div>
 
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-bark/40" />
                 <Input
                   placeholder="Search households..."
                   value={search}
@@ -97,7 +118,7 @@ export default function HouseholdsPage() {
                   className="pl-9"
                 />
               </div>
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-bark/60">
                 {filtered?.length ?? 0} households
               </span>
             </div>
@@ -123,14 +144,14 @@ export default function HouseholdsPage() {
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-slate-500">
+                      <TableCell colSpan={5} className="text-center text-bark/40">
                         No households found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filtered.map((h) => (
                       <TableRow key={h.id}>
-                        <TableCell className="font-medium text-white">
+                        <TableCell className="font-medium text-bark">
                           {h.name}
                         </TableCell>
                         <TableCell>{formatDate(h.created_at)}</TableCell>

@@ -6,16 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LiveIndicator } from "@/components/ui/live-indicator";
 import { supabase } from "@/lib/supabase";
-import { formatDateTime } from "@/lib/utils";
-import { RefreshCw, UserPlus, Package, ChefHat } from "lucide-react";
+import { useRealtime } from "@/lib/use-realtime";
+import { showToast } from "@/components/ui/toast";
+import { formatDateTime, exportToCsv } from "@/lib/utils";
+import { RefreshCw, UserPlus, Package, ChefHat, Download } from "lucide-react";
 import type { ActivityItem } from "@/types/database";
 
 const typeConfig = {
-  signup: { icon: UserPlus, color: "text-emerald-400", badge: "success" as const, label: "Signup" },
-  item_added: { icon: Package, color: "text-blue-400", badge: "secondary" as const, label: "Item Added" },
-  recipe_cooked: { icon: ChefHat, color: "text-brand-red", badge: "default" as const, label: "Cooked" },
-  item_removed: { icon: Package, color: "text-amber-400", badge: "warning" as const, label: "Removed" },
+  signup: { icon: UserPlus, color: "text-green-700", badge: "success" as const, label: "Signup" },
+  item_added: { icon: Package, color: "text-forest", badge: "secondary" as const, label: "Item Added" },
+  recipe_cooked: { icon: ChefHat, color: "text-coral-dark", badge: "default" as const, label: "Cooked" },
+  item_removed: { icon: Package, color: "text-coral", badge: "warning" as const, label: "Removed" },
 };
 
 export default function ActivityPage() {
@@ -25,7 +28,6 @@ export default function ActivityPage() {
   const fetchActivity = useCallback(async () => {
     const results: ActivityItem[] = [];
 
-    // Fetch recent signups
     const { data: signups } = await supabase
       .from("profiles")
       .select("id, email, created_at")
@@ -45,7 +47,6 @@ export default function ActivityPage() {
       });
     }
 
-    // Fetch recent pantry items
     const { data: items } = await supabase
       .from("pantry_items")
       .select("id, name, added_by, created_at")
@@ -64,7 +65,6 @@ export default function ActivityPage() {
       });
     }
 
-    // Fetch recent cook history
     const { data: cooks } = await supabase
       .from("recipe_cooked_history")
       .select("id, recipe_title, user_id, cooked_at")
@@ -83,7 +83,6 @@ export default function ActivityPage() {
       });
     }
 
-    // Sort by timestamp descending
     results.sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
@@ -95,10 +94,34 @@ export default function ActivityPage() {
     fetchActivity();
   }, [fetchActivity]);
 
+  const handleNewActivity = useCallback(() => {
+    showToast("New activity detected");
+    fetchActivity();
+  }, [fetchActivity]);
+
+  const { connected } = useRealtime({
+    table: "pantry_items",
+    event: "INSERT",
+    onRecord: handleNewActivity,
+  });
+
   async function handleRefresh() {
     setRefreshing(true);
     await fetchActivity();
     setRefreshing(false);
+  }
+
+  function handleExport() {
+    if (!activities) return;
+    exportToCsv(
+      activities.map((a) => ({
+        type: a.type,
+        description: a.description,
+        user_email: a.user_email ?? "",
+        timestamp: a.timestamp,
+      })),
+      "fridgenie-activity.csv"
+    );
   }
 
   return (
@@ -106,13 +129,20 @@ export default function ActivityPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Activity</h1>
-            <p className="mt-1 text-slate-400">Recent activity across Fridgenie</p>
+            <h1 className="font-heading text-3xl font-bold text-bark">Activity</h1>
+            <p className="mt-1 text-bark/60">Recent activity across Fridgenie</p>
           </div>
-          <Button variant="secondary" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-3">
+            <LiveIndicator connected={connected} />
+            <Button variant="secondary" onClick={handleExport} disabled={!activities}>
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+            <Button variant="secondary" onClick={handleRefresh} disabled={refreshing}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         <Card>
@@ -133,7 +163,7 @@ export default function ActivityPage() {
                 ))}
               </div>
             ) : activities.length === 0 ? (
-              <p className="text-center text-slate-500 py-8">No activity yet</p>
+              <p className="text-center text-bark/40 py-8">No activity yet</p>
             ) : (
               <div className="space-y-1">
                 {activities.map((activity) => {
@@ -142,24 +172,24 @@ export default function ActivityPage() {
                   return (
                     <div
                       key={activity.id}
-                      className="flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-slate-800/50"
+                      className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-forest/5"
                     >
-                      <div className={`rounded-full bg-slate-800 p-2 ${config.color}`}>
+                      <div className={`rounded-full bg-forest/10 p-2 ${config.color}`}>
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-slate-200">
+                        <p className="text-sm text-bark">
                           {activity.description}
                         </p>
                         {activity.user_email && (
-                          <p className="text-xs text-slate-500 truncate">
+                          <p className="text-xs text-bark/40 truncate">
                             {activity.user_email}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <Badge variant={config.badge}>{config.label}</Badge>
-                        <span className="text-xs text-slate-500 whitespace-nowrap">
+                        <span className="text-xs text-bark/40 whitespace-nowrap">
                           {formatDateTime(activity.timestamp)}
                         </span>
                       </div>
