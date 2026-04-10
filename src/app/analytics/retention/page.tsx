@@ -263,8 +263,8 @@ export default function RetentionPage() {
                             <span
                               className="inline-block rounded-lg px-2 py-0.5 text-xs font-medium"
                               style={{
-                                backgroundColor: `rgba(46,125,50,${Math.max(0.05, val / 100)})`,
-                                color: val > 50 ? "white" : "#3E2723",
+                                backgroundColor: `rgba(229,57,53,${Math.max(0.05, val / 100)})`,
+                                color: val > 50 ? "white" : "#3A3A3A",
                               }}
                             >
                               {val}%

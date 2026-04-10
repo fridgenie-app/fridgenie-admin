@@ -9,20 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#F5F5DC",
-        "cream-dark": "#EDE8D0",
-        bark: "#3E2723",
+        cream: "#FFF8F0",
+        "cream-dark": "#FFF0E0",
+        bark: "#3A3A3A",
         forest: {
-          DEFAULT: "#2E7D32",
-          light: "#4CAF50",
-          dark: "#1B5E20",
+          DEFAULT: "#E53935",
+          light: "#EF5350",
+          dark: "#C62828",
         },
         coral: {
           DEFAULT: "#FF8A65",
           light: "#FFAB91",
           dark: "#E64A19",
         },
-        moss: "#81C784",
+        moss: "#FF8A65",
       },
       fontFamily: {
         heading: ["var(--font-fredoka)", "sans-serif"],

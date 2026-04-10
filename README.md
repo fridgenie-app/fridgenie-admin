@@ -1,6 +1,6 @@
 # Fridgenie Admin Dashboard
 
-Admin dashboard for [Fridgenie](https://fridgenie.app) - the cozy, Ghibli-inspired kitchen companion app.
+Admin dashboard for the Fridgenie app — a kitchen companion for managing pantries, recipes, and households.
 
 ## Features
 
@@ -20,7 +20,7 @@ Admin dashboard for [Fridgenie](https://fridgenie.app) - the cozy, Ghibli-inspir
 ## Tech Stack
 
 - **Framework**: Next.js 14 (Static Export)
-- **Styling**: Tailwind CSS with Ghibli-inspired warm theme
+- **Styling**: Tailwind CSS with tomato red theme
 - **Charts**: Recharts
 - **Auth & Data**: Supabase (Auth, Database, Realtime)
 - **Fonts**: Fredoka (headings) + Nunito (body)
@@ -52,11 +52,19 @@ NEXT_PUBLIC_SITE_URL=https://admin.fridgenie.app
 
 ## Deployment
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed setup instructions including:
-- Custom domain configuration (admin.fridgenie.app)
-- Apple Sign-In setup
-- Supabase Realtime configuration
-- SSL/HTTPS setup
+Deployed via GitHub Pages with GitHub Actions. See [DEPLOYMENT.md](./DEPLOYMENT.md) for full setup instructions.
+
+### Quick Deploy
+
+1. Push to `main` branch — GitHub Actions builds and deploys automatically
+2. Custom domain: `admin.fridgenie.app`
+3. Add Supabase secrets to repo Settings > Secrets:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### DNS
+
+Add a CNAME record: `admin.fridgenie.app` → `fridgenie-app.github.io`
 
 ## Project Structure
 

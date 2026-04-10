@@ -15,7 +15,7 @@ import { RefreshCw, UserPlus, Package, ChefHat, Download } from "lucide-react";
 import type { ActivityItem } from "@/types/database";
 
 const typeConfig = {
-  signup: { icon: UserPlus, color: "text-green-700", badge: "success" as const, label: "Signup" },
+  signup: { icon: UserPlus, color: "text-forest", badge: "success" as const, label: "Signup" },
   item_added: { icon: Package, color: "text-forest", badge: "secondary" as const, label: "Item Added" },
   recipe_cooked: { icon: ChefHat, color: "text-coral-dark", badge: "default" as const, label: "Cooked" },
   item_removed: { icon: Package, color: "text-coral", badge: "warning" as const, label: "Removed" },

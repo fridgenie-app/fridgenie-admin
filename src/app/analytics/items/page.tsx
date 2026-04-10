@@ -195,7 +195,7 @@ export default function ItemAnalyticsPage() {
                       ))}
                     </Pie>
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Legend wrapperStyle={{ color: "#5D4037", fontSize: 12 }} />
+                    <Legend wrapperStyle={{ color: "#6B6B6B", fontSize: 12 }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}

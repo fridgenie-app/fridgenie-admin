@@ -1,66 +1,66 @@
-# Fridgenie Admin - Deployment Guide
+# Deployment Guide
 
-## Custom Domain: admin.fridgenie.app
+## Overview
 
-### DNS Configuration
+Fridgenie Admin is deployed as a static site to GitHub Pages with a custom domain.
 
-Add a CNAME record in your domain registrar (e.g., Cloudflare, Namecheap):
+- **Repo**: `fridgenie-app/fridgenie-admin` (private)
+- **Domain**: `admin.fridgenie.app`
+- **Hosting**: GitHub Pages
+- **CI/CD**: GitHub Actions (`.github/workflows/deploy.yml`)
 
+## DNS Setup
+
+### CNAME Record
+
+Add the following DNS record to your domain registrar for `fridgenie.app`:
+
+| Type  | Name    | Value                      | TTL  |
+|-------|---------|----------------------------|------|
+| CNAME | admin   | fridgenie-app.github.io    | 3600 |
+
+### Verify DNS
+
+```bash
+dig admin.fridgenie.app CNAME
+# Should return: admin.fridgenie.app. CNAME fridgenie-app.github.io.
 ```
-Type: CNAME
-Name: admin
-Value: <your-hosting-provider>.app (e.g., cname.vercel-dns.com)
-TTL: Auto
+
+## GitHub Pages Setup
+
+1. Go to the repo Settings > Pages
+2. Source: **GitHub Actions**
+3. Custom domain: `admin.fridgenie.app`
+4. Check **Enforce HTTPS** (SSL is automatic via GitHub Pages)
+
+## GitHub Secrets
+
+Add these repository secrets in Settings > Secrets and variables > Actions:
+
+| Secret                          | Description                        |
+|---------------------------------|------------------------------------|
+| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase project URL          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key |
+
+## How Deployment Works
+
+1. Push to `main` triggers the GitHub Actions workflow
+2. The workflow installs dependencies, builds the static site, and copies the CNAME file
+3. The `dist/` output is uploaded as a GitHub Pages artifact
+4. GitHub Pages deploys the artifact and serves it at `admin.fridgenie.app`
+
+## Manual Build
+
+```bash
+npm run build
 ```
 
-### Hosting Options
-
-#### Vercel (Recommended)
-1. Connect your GitHub repo to Vercel
-2. Framework preset: Next.js
-3. Build command: `npm run build`
-4. Output directory: `out`
-5. Add custom domain `admin.fridgenie.app` in project settings
-6. SSL is automatic via Let's Encrypt
-
-#### Netlify
-1. Connect your GitHub repo
-2. Build command: `npm run build`
-3. Publish directory: `out`
-4. Add custom domain in Domain settings
-5. Enable HTTPS (automatic)
-
-#### Cloudflare Pages
-1. Connect your GitHub repo
-2. Build command: `npm run build`
-3. Build output directory: `out`
-4. Add custom domain via Cloudflare DNS
-5. SSL is automatic (Full/Strict mode recommended)
-
-### Environment Variables
-
-Set these in your hosting provider's dashboard:
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | `https://xxx.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | `eyJ...` |
-| `NEXT_PUBLIC_BASE_PATH` | Leave empty for custom domain | `` |
-| `NEXT_PUBLIC_SITE_URL` | Your admin dashboard URL | `https://admin.fridgenie.app` |
-
-### SSL/HTTPS
-
-All recommended hosting providers (Vercel, Netlify, Cloudflare Pages) provide automatic SSL certificates. No manual SSL configuration is needed.
-
-If self-hosting:
-1. Use Let's Encrypt with certbot for free SSL certificates
-2. Configure your reverse proxy (nginx/caddy) to terminate SSL
-3. Redirect HTTP to HTTPS
+The static site is exported to the `dist/` directory. The CNAME file must be present in `dist/` for the custom domain to work — the GitHub Actions workflow handles this automatically.
 
 ## Apple Sign-In Setup
 
 ### 1. Apple Developer Console
-1. Go to [developer.apple.com](https://developer.apple.com)
+1. Go to developer.apple.com
 2. Navigate to Certificates, Identifiers & Profiles > Identifiers
 3. Create a new App ID with "Sign in with Apple" capability
 4. Create a new Services ID for web authentication
@@ -85,27 +85,29 @@ In Supabase Dashboard > Authentication > URL Configuration:
 For live dashboard updates, ensure Realtime is enabled:
 1. Go to Supabase Dashboard > Database > Replication
 2. Enable replication for tables: `profiles`, `pantry_items`, `recipe_cooked_history`
-3. Ensure your Supabase plan supports Realtime connections
 
-## Build & Deploy
+## Troubleshooting
 
-```bash
-# Install dependencies
-npm install
+### Build fails
+- Ensure all environment variables are set in GitHub Secrets
+- Check that `npm ci` can resolve all dependencies
 
-# Build static site
-npm run build
+### Custom domain not working
+- Verify the CNAME DNS record points to `fridgenie-app.github.io`
+- DNS propagation can take up to 48 hours
+- Ensure the CNAME file exists in the repo root with `admin.fridgenie.app`
+- In repo Settings > Pages, confirm the custom domain is set and HTTPS is enforced
 
-# Output is in the `out/` directory
-# Upload this to your hosting provider
-```
+### SSL certificate issues
+- GitHub Pages provisions SSL automatically after DNS is verified
+- Wait 15-30 minutes after DNS propagation for certificate provisioning
+- Check status in Settings > Pages under the custom domain section
 
 ## Post-Deployment Checklist
 
 - [ ] DNS CNAME record configured
 - [ ] SSL certificate active (HTTPS working)
-- [ ] Environment variables set in hosting provider
-- [ ] Supabase URL and anon key configured
+- [ ] GitHub Secrets set for Supabase credentials
 - [ ] Apple Sign-In configured (Apple Developer + Supabase)
 - [ ] Supabase redirect URLs updated for production domain
 - [ ] Realtime replication enabled for relevant tables

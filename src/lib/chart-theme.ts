@@ -1,29 +1,29 @@
 export const chartColors = {
-  grid: "#C8E6C9",
-  axis: "#5D4037",
-  forest: "#2E7D32",
+  grid: "rgba(229, 57, 53, 0.1)",
+  axis: "#6B6B6B",
+  forest: "#E53935",
   coral: "#FF8A65",
-  forestLight: "#4CAF50",
+  forestLight: "#EF5350",
   coralLight: "#FFAB91",
-  moss: "#81C784",
-  bark: "#5D4037",
+  moss: "#FF8A65",
+  bark: "#3A3A3A",
 };
 
 export const tooltipStyle = {
   backgroundColor: "#FFFFFF",
-  border: "1px solid #C8E6C9",
+  border: "1px solid rgba(229, 57, 53, 0.15)",
   borderRadius: "12px",
-  color: "#3E2723",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+  color: "#3A3A3A",
+  boxShadow: "0 4px 12px rgba(229, 57, 53, 0.08)",
 };
 
 export const GHIBLI_PALETTE = [
-  "#2E7D32",
+  "#E53935",
   "#FF8A65",
-  "#4CAF50",
+  "#EF5350",
   "#FFAB91",
-  "#81C784",
-  "#5D4037",
-  "#A5D6A7",
+  "#C62828",
+  "#FF9800",
+  "#4CAF50",
   "#FFE0B2",
 ];
