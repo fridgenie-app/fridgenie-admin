@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
-      <body className="font-sans">
+      <body className="font-body">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
