@@ -1,13 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: 'dist',
-  basePath: '',
-  assetPrefix: '',
+  // Server runtime required for the admin API routes (service-role layer).
+  // Static export is intentionally NOT used anymore.
   images: {
     unoptimized: true,
   },
-  trailingSlash: true,
 };
 
 module.exports = nextConfig;

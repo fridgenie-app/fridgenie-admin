@@ -37,7 +37,7 @@ export default function RecipeAnalyticsPage() {
   async function fetchFunnel() {
     const [recipesRes, cookedRes, favRes] = await Promise.all([
       supabase.from("fridgenie_recipes").select("id", { count: "exact", head: true }),
-      supabase.from("recipe_cooked_history").select("id", { count: "exact", head: true }),
+      supabase.from("user_cooked_recipes").select("id", { count: "exact", head: true }),
       supabase.from("user_favorites").select("id", { count: "exact", head: true }),
     ]);
 
@@ -87,7 +87,7 @@ export default function RecipeAnalyticsPage() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const { data } = await supabase
-      .from("recipe_cooked_history")
+      .from("user_cooked_recipes")
       .select("cooked_at")
       .gte("cooked_at", thirtyDaysAgo.toISOString());
 
@@ -112,12 +112,12 @@ export default function RecipeAnalyticsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-bark">Recipe Analytics</h1>
-          <p className="mt-1 text-bark/60">Recipe engagement and discovery funnel</p>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">Recipe Analytics</h1>
+          <p className="mt-1 text-ink/60">Recipe engagement and discovery funnel</p>
         </div>
 
         <div>
-          <h2 className="font-heading text-lg font-semibold text-bark mb-4">Discovery Funnel</h2>
+          <h2 className="font-heading text-lg font-semibold text-ink mb-4">Discovery Funnel</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <MetricCard title="Total Recipes" value={totalRecipes} icon={ChefHat} description="Created" />
             <MetricCard title="Favorited" value={totalFavorited} icon={Heart} description="User saves" />
@@ -135,7 +135,7 @@ export default function RecipeAnalyticsPage() {
               {topFavorited === null ? (
                 <Skeleton className="h-[300px] w-full" />
               ) : topFavorited.length === 0 ? (
-                <div className="flex h-[300px] items-center justify-center text-bark/40">No favorites data yet</div>
+                <div className="flex h-[300px] items-center justify-center text-ink/40">No favorites data yet</div>
               ) : (
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={topFavorited} layout="vertical" margin={{ left: 20 }}>
@@ -149,7 +149,7 @@ export default function RecipeAnalyticsPage() {
                       tickFormatter={(v) => v.length > 20 ? v.slice(0, 20) + "..." : v}
                     />
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Bar dataKey="count" fill={chartColors.coral} radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="count" fill={chartColors.tomatoLight} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -175,7 +175,7 @@ export default function RecipeAnalyticsPage() {
                     />
                     <YAxis stroke={chartColors.axis} fontSize={12} allowDecimals={false} />
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Line type="monotone" dataKey="count" stroke={chartColors.forest} strokeWidth={2} dot={{ fill: chartColors.forest, r: 3 }} />
+                    <Line type="monotone" dataKey="count" stroke={chartColors.tomato} strokeWidth={2} dot={{ fill: chartColors.tomato, r: 3 }} />
                   </LineChart>
                 </ResponsiveContainer>
               )}
@@ -190,9 +190,9 @@ export default function RecipeAnalyticsPage() {
           <CardContent>
             <div className="flex h-[120px] items-center justify-center">
               <div className="text-center">
-                <Clock className="mx-auto mb-2 h-8 w-8 text-bark/20" />
-                <p className="text-bark/40">Requires tracking save-to-cook timestamps per user</p>
-                <p className="text-xs text-bark/30 mt-1">Coming soon with enhanced event tracking</p>
+                <Clock className="mx-auto mb-2 h-8 w-8 text-ink/20" />
+                <p className="text-ink/40">Requires tracking save-to-cook timestamps per user</p>
+                <p className="text-xs text-ink/30 mt-1">Coming soon with enhanced event tracking</p>
               </div>
             </div>
           </CardContent>

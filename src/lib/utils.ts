@@ -77,7 +77,7 @@ export async function exportToPdf(elementId: string, filename: string) {
   const html2canvas = (await import("html2canvas")).default;
   const { jsPDF } = await import("jspdf");
 
-  const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#F5F5DC" });
+  const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#F4EFE7" });
   const imgData = canvas.toDataURL("image/png");
 
   const pdf = new jsPDF("landscape", "mm", "a4");

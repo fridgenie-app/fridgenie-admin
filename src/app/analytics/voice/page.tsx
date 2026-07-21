@@ -44,8 +44,8 @@ export default function VoiceAnalyticsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-bark">Voice & Feature Usage</h1>
-          <p className="mt-1 text-bark/60">Track how users interact with Fridgenie features</p>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">Voice & Feature Usage</h1>
+          <p className="mt-1 text-ink/60">Track how users interact with Fridgenie features</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -54,15 +54,15 @@ export default function VoiceAnalyticsPage() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="space-y-3">
-                    <div className="rounded-xl bg-forest/10 p-3 w-fit">
-                      <feature.icon className="h-6 w-6 text-forest" />
+                    <div className="rounded-xl bg-tomato/10 p-3 w-fit">
+                      <feature.icon className="h-6 w-6 text-tomato" />
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-bark">{feature.name}</h3>
-                      <p className="text-xs text-bark/50 mt-1">{feature.description}</p>
+                      <h3 className="font-heading font-semibold text-ink-strong">{feature.name}</h3>
+                      <p className="text-xs text-ink/50 mt-1">{feature.description}</p>
                     </div>
-                    <div className="text-2xl font-bold text-bark/20">--</div>
-                    <p className="text-xs text-bark/30">
+                    <div className="text-2xl font-bold text-ink/20">--</div>
+                    <p className="text-xs text-ink/30">
                       {feature.status === "active" ? "Data source available" : "Data source not yet configured"}
                     </p>
                   </div>
@@ -80,11 +80,11 @@ export default function VoiceAnalyticsPage() {
           <CardContent>
             <div className="flex h-[200px] items-center justify-center">
               <div className="text-center">
-                <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-forest/10">
-                  <Mic className="h-8 w-8 text-forest/30" />
+                <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-tomato/10">
+                  <Mic className="h-8 w-8 text-tomato/30" />
                 </div>
-                <p className="font-heading font-semibold text-bark/60">Analytics Coming Soon</p>
-                <p className="mt-1 text-sm text-bark/40 max-w-md">
+                <p className="font-heading font-semibold text-ink/60">Analytics Coming Soon</p>
+                <p className="mt-1 text-sm text-ink/40 max-w-md">
                   Once input method tracking is added to the pantry_items table, this chart will show the ratio of manual entries vs voice commands vs receipt scans.
                 </p>
               </div>
@@ -100,9 +100,9 @@ export default function VoiceAnalyticsPage() {
           <CardContent>
             <div className="space-y-3">
               {dataChecklist.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-3 bg-cream">
-                  <CheckCircle className={`h-5 w-5 ${item.done ? "text-forest" : "text-bark/20"}`} />
-                  <span className={`text-sm ${item.done ? "text-bark line-through" : "text-bark/70"}`}>
+                <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-3 bg-paper">
+                  <CheckCircle className={`h-5 w-5 ${item.done ? "text-tomato" : "text-ink/20"}`} />
+                  <span className={`text-sm ${item.done ? "text-ink line-through" : "text-ink/70"}`}>
                     {item.label}
                   </span>
                 </div>

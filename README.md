@@ -2,75 +2,64 @@
 
 Owner-only operations console for Fridgenie, served at **admin.fridgenie.app**.
 
-This is a **self-contained static site** (`web/`) — no build step, no framework.
-It talks to the existing Supabase project (`rhhaojpsqfbapltcvsbz`) using only the
-**public anon key**, with all access gated by Row-Level Security and admin-only
-RPCs. The service-role key is never used client-side.
-
-> The previous Next.js app (`src/`, `package.json`, …) is **superseded** by
-> `web/` and can be deleted in a follow-up. It was left in place to keep this
-> diff reviewable.
+A **Next.js 14 (App Router)** app deployed to **Vercel (SSR)**. Privileged data
+access runs through server-only API routes that use the Supabase service-role
+key; the browser only ever holds the public anon key.
 
 ## Design
 
-Matches the live landing page tokens: **Shippori Mincho** headers, **Inter**
-body, warm paper palette (`--bg:#faf7f2`, `--red:#b63f39`). Charts via Chart.js.
+Matches the live Fridgenie brand: **Shippori Mincho** headings, **Inter** body,
+warm paper palette (page `#F4EFE7`, card `#FAF7F2`), tomato red `#B63F39`
+(button `#C94B44`), warm ink text, subtle botanical neutral accent. No emojis;
+English only. Charts via Recharts.
 
-## Dashboard sections
+## Pages
 
-1. **Overview** — total users, DAU / WAU / MAU
-2. **Signups** — per-day chart, last 30 days
-3. **Content usage** — pantry items, recipes generated, receipt scans, voice inputs
-4. **AI cost** — daily spend (last 30 days) + top 10 users by token usage
-5. **Users** — searchable list: email, signup date, last active, item count, plan
-6. **Per-user actions** — grant/revoke pro, soft-delete / restore
+1. **Overview** (`/`) — users / pro / deleted, DAU·WAU·MAU, households · pantry
+   items · recipes cooked · AI recipes, and AI spend (today / 7d / 30d).
+2. **Cost** (`/cost`) — 30-day total, daily cost chart, and a per-model /
+   per-function breakdown with an "unpriced" warning.
+3. **Users** (`/users`) — searchable list with tier / admin / status / created /
+   last active, plus Grant/Revoke Pro and Soft-delete/Restore actions.
+4. Existing analytics pages (households, activity, retention, items, recipes,
+   voice, geo, revenue, exports) — re-skinned to the new brand.
 
-## Security model
+## Architecture
 
-- **Identity:** `profiles.is_admin` + `public.is_admin()` (already in the mobile
-  backend). No separate `admin_users` table — `is_admin` **is** the allow-list.
-- **Reads:** every dashboard query is a `SECURITY DEFINER` RPC
-  (`admin_*`, granted to `authenticated`) that calls `fg_assert_admin()` first.
-  A non-admin authenticated user gets `forbidden`; anon gets nothing.
-- **AI spend:** sourced from the service-role-only `ai_usage_events` ledger
-  (written by the recipe-suggest / voice-transcribe / receipt-ocr Edge Functions
-  via `_shared/ai_usage.ts`). The RPCs are the only path that exposes it to the
-  owner. Dollar cost is computed from `ai_model_pricing` (config, not code).
-- **Actions** are audited to `admin_activity_logs`.
+- **Public client** (`src/lib/supabase.ts`) — anon key, browser-safe.
+- **Service-role layer** (`src/lib/supabase-admin.ts`) — server-only factory,
+  reads env lazily.
+- **Admin guard** (`src/lib/admin-guard.ts`) — `requireAdmin(req)` validates the
+  caller's JWT and confirms `profiles.is_admin`, returning a service-role client.
+- **API routes** (`src/app/api/admin/*`) — `overview`, `cost`, `users`,
+  `set-tier`, `set-deleted`. Each runs on the Node.js runtime, is
+  `force-dynamic`, and is guarded by `requireAdmin`.
+- **Client API helper** (`src/lib/admin-api.ts`) — attaches the current access
+  token and calls the routes.
 
-See `supabase/migrations/20260721000000_admin_dashboard.sql`.
+The service-role RPCs (`ai_admin_overview`, `ai_usage_cost_report`,
+`admin_set_subscription_tier`, `admin_set_user_deleted`) refuse anon/authenticated
+JWTs, so they are only ever called server-side.
 
-## One-time setup
+## Environment
 
-1. **Apply the migration** — paste `supabase/migrations/20260721000000_admin_dashboard.sql`
-   into the Supabase SQL editor and run it (idempotent). It also seeds
-   `profiles.is_admin = true` for `rexford1011@gmail.com`.
-   > Mirror this file into the mobile repo's `supabase/migrations/` so the two
-   > schemas stay in sync.
-2. **Verify pricing** — check the `ai_model_pricing` rows (gpt-4o, gpt-4o-mini,
-   gpt-5.4, whisper-1) and set the real per-1M-token prices. `whisper-1` is
-   billed per audio-minute and shows `$0` here by design.
-3. **Auth redirect** — in Supabase → Authentication → URL Configuration, add
-   `https://admin.fridgenie.app` (and `https://admin.fridgenie.app/`) to
-   **Redirect URLs**, and set it as an allowed Site URL.
+Copy `.env.local.example` → `.env.local` and fill in:
 
-## Sign in
-
-Go to https://admin.fridgenie.app, enter `rexford1011@gmail.com`, click the magic
-link in your inbox. The link returns to the dashboard already signed in. Any
-non-admin who signs in sees a "Not authorized" screen.
+- `NEXT_PUBLIC_SUPABASE_URL` (public)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public)
+- `SUPABASE_SERVICE_ROLE_KEY` (server-only secret — never `NEXT_PUBLIC`)
 
 ## Local development
 
 ```bash
-cd web
-python3 -m http.server 4173
-# open http://localhost:4173
+npm install
+npm run dev       # http://localhost:3000
 ```
-Add `http://localhost:4173` to the Supabase Redirect URLs to test magic links locally.
+
+Add `http://localhost:3000` to the Supabase Auth redirect URLs to sign in locally.
 
 ## Deploy
 
-Push to `main`; GitHub Actions publishes `web/` to GitHub Pages at
-`admin.fridgenie.app` (CNAME committed). No secrets required — the anon key is
-public by design.
+Push to `main`; Vercel builds and deploys. See **DEPLOYMENT.md** for env vars,
+custom-domain DNS (which must be repointed from GitHub Pages to Vercel), and the
+post-deploy checklist.

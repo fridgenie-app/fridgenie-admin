@@ -3,7 +3,7 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GHIBLI_PALETTE, tooltipStyle } from "@/lib/chart-theme";
+import { CHART_PALETTE, tooltipStyle } from "@/lib/chart-theme";
 
 interface SizeData {
   name: string;
@@ -24,7 +24,7 @@ export function HouseholdSizeChart({ data }: HouseholdSizeChartProps) {
         {data === null ? (
           <Skeleton className="h-[300px] w-full" />
         ) : data.length === 0 ? (
-          <div className="flex h-[300px] items-center justify-center text-bark/40">
+          <div className="flex h-[300px] items-center justify-center text-ink/40">
             No household data yet
           </div>
         ) : (
@@ -43,7 +43,7 @@ export function HouseholdSizeChart({ data }: HouseholdSizeChartProps) {
                 }
               >
                 {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={GHIBLI_PALETTE[index % GHIBLI_PALETTE.length]} />
+                  <Cell key={`cell-${index}`} fill={CHART_PALETTE[index % CHART_PALETTE.length]} />
                 ))}
               </Pie>
               <Tooltip contentStyle={tooltipStyle} />

@@ -18,10 +18,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-cream">
+      <div className="flex h-screen items-center justify-center bg-paper">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-forest border-t-transparent" />
-          <p className="text-sm text-bark/60">Loading...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-tomato border-t-transparent" />
+          <p className="text-sm text-ink/60">Loading...</p>
         </div>
       </div>
     );
@@ -30,7 +30,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-paper">
       <Sidebar />
       <main className="pl-64">
         <div className="p-8">{children}</div>

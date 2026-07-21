@@ -15,10 +15,10 @@ import { RefreshCw, UserPlus, Package, ChefHat, Download } from "lucide-react";
 import type { ActivityItem } from "@/types/database";
 
 const typeConfig = {
-  signup: { icon: UserPlus, color: "text-forest", badge: "success" as const, label: "Signup" },
-  item_added: { icon: Package, color: "text-forest", badge: "secondary" as const, label: "Item Added" },
-  recipe_cooked: { icon: ChefHat, color: "text-coral-dark", badge: "default" as const, label: "Cooked" },
-  item_removed: { icon: Package, color: "text-coral", badge: "warning" as const, label: "Removed" },
+  signup: { icon: UserPlus, color: "text-tomato", badge: "success" as const, label: "Signup" },
+  item_added: { icon: Package, color: "text-tomato", badge: "secondary" as const, label: "Item Added" },
+  recipe_cooked: { icon: ChefHat, color: "text-tomato-dark", badge: "default" as const, label: "Cooked" },
+  item_removed: { icon: Package, color: "text-tomato", badge: "warning" as const, label: "Removed" },
 };
 
 export default function ActivityPage() {
@@ -66,7 +66,7 @@ export default function ActivityPage() {
     }
 
     const { data: cooks } = await supabase
-      .from("recipe_cooked_history")
+      .from("user_cooked_recipes")
       .select("id, recipe_title, user_id, cooked_at")
       .order("cooked_at", { ascending: false })
       .limit(20)
@@ -129,8 +129,8 @@ export default function ActivityPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-bark">Activity</h1>
-            <p className="mt-1 text-bark/60">Recent activity across Fridgenie</p>
+            <h1 className="font-heading text-3xl font-bold text-ink-strong">Activity</h1>
+            <p className="mt-1 text-ink/60">Recent activity across Fridgenie</p>
           </div>
           <div className="flex items-center gap-3">
             <LiveIndicator connected={connected} />
@@ -163,7 +163,7 @@ export default function ActivityPage() {
                 ))}
               </div>
             ) : activities.length === 0 ? (
-              <p className="text-center text-bark/40 py-8">No activity yet</p>
+              <p className="text-center text-ink/40 py-8">No activity yet</p>
             ) : (
               <div className="space-y-1">
                 {activities.map((activity) => {
@@ -172,24 +172,24 @@ export default function ActivityPage() {
                   return (
                     <div
                       key={activity.id}
-                      className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-forest/5"
+                      className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-tomato/5"
                     >
-                      <div className={`rounded-full bg-forest/10 p-2 ${config.color}`}>
+                      <div className={`rounded-full bg-tomato/10 p-2 ${config.color}`}>
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-bark">
+                        <p className="text-sm text-ink">
                           {activity.description}
                         </p>
                         {activity.user_email && (
-                          <p className="text-xs text-bark/40 truncate">
+                          <p className="text-xs text-ink/40 truncate">
                             {activity.user_email}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <Badge variant={config.badge}>{config.label}</Badge>
-                        <span className="text-xs text-bark/40 whitespace-nowrap">
+                        <span className="text-xs text-ink/40 whitespace-nowrap">
                           {formatDateTime(activity.timestamp)}
                         </span>
                       </div>

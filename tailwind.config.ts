@@ -9,27 +9,41 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#FFF8F0",
-        "cream-dark": "#FFF0E0",
-        bark: "#3A3A3A",
-        forest: {
-          DEFAULT: "#E53935",
-          light: "#EF5350",
-          dark: "#C62828",
+        // Warm paper palette — never cold white
+        paper: {
+          DEFAULT: "#F4EFE7", // page base
+          card: "#FAF7F2", // card surface
         },
-        coral: {
-          DEFAULT: "#FF8A65",
-          light: "#FFAB91",
-          dark: "#E64A19",
+        // Primary tomato red
+        tomato: {
+          DEFAULT: "#B63F39",
+          button: "#C94B44", // button fill
+          light: "#C94B44",
+          dark: "#9A332E",
         },
-        moss: "#FF8A65",
+        // Ink text
+        ink: {
+          strong: "#2B1E1B",
+          DEFAULT: "#5A4742",
+          light: "#8C7B75",
+        },
+        // Muted botanical neutral accent (subtle borders/chips only)
+        botanical: "#D8DED6",
+        // Positive / fresh semantic green (use sparingly)
+        fresh: {
+          DEFAULT: "#6E8B6A",
+          soft: "#EAF0E6",
+        },
       },
       fontFamily: {
-        heading: ["var(--font-fredoka)", "sans-serif"],
-        sans: ["var(--font-nunito)", "sans-serif"],
+        heading: ["var(--font-shippori)", "serif"],
+        sans: ["var(--font-inter)", "sans-serif"],
       },
       borderRadius: {
-        "2xl": "20px",
+        card: "18px",
+        btn: "24px",
+        input: "16px",
+        "2xl": "18px",
       },
     },
   },

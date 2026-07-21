@@ -1,29 +1,31 @@
 export const chartColors = {
-  grid: "rgba(229, 57, 53, 0.1)",
-  axis: "#6B6B6B",
-  forest: "#E53935",
-  coral: "#FF8A65",
-  forestLight: "#EF5350",
-  coralLight: "#FFAB91",
-  moss: "#FF8A65",
-  bark: "#3A3A3A",
+  grid: "rgba(182, 63, 57, 0.1)",
+  axis: "#8C7B75",
+  tomato: "#B63F39",
+  tomatoLight: "#C94B44",
+  tomatoDark: "#9A332E",
+  ink: "#2B1E1B",
+  botanical: "#D8DED6",
+  // Positive/fresh semantic green (use sparingly)
+  fresh: "#6E8B6A",
 };
 
 export const tooltipStyle = {
-  backgroundColor: "#FFFFFF",
-  border: "1px solid rgba(229, 57, 53, 0.15)",
+  backgroundColor: "#FAF7F2",
+  border: "1px solid rgba(182, 63, 57, 0.15)",
   borderRadius: "12px",
-  color: "#3A3A3A",
-  boxShadow: "0 4px 12px rgba(229, 57, 53, 0.08)",
+  color: "#2B1E1B",
+  boxShadow: "0 4px 12px rgba(182, 63, 57, 0.08)",
 };
 
-export const GHIBLI_PALETTE = [
-  "#E53935",
-  "#FF8A65",
-  "#EF5350",
-  "#FFAB91",
-  "#C62828",
-  "#FF9800",
-  "#4CAF50",
-  "#FFE0B2",
+// Warm paper/tomato/ink chart palette (no cold or vivid tones)
+export const CHART_PALETTE = [
+  "#B63F39",
+  "#C94B44",
+  "#9A332E",
+  "#8C7B75",
+  "#D8DED6",
+  "#6E8B6A",
+  "#5A4742",
+  "#E0C3A0",
 ];

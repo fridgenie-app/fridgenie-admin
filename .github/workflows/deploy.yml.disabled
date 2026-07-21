@@ -1,3 +1,7 @@
+# DISABLED: the admin console moved from a static GitHub Pages export to a
+# Vercel SSR deployment (the app now needs a server runtime for the /api/admin
+# service-role routes). This file is kept for history but will NOT run because
+# its extension is `.yml.disabled`. See DEPLOYMENT.md for the Vercel setup.
 name: Deploy admin (static) to GitHub Pages
 
 on:

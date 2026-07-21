@@ -38,7 +38,7 @@ export function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="flex items-center gap-3 rounded-xl bg-forest px-4 py-3 text-sm text-white shadow-lg animate-in slide-in-from-right"
+          className="flex items-center gap-3 rounded-xl bg-tomato px-4 py-3 text-sm text-white shadow-lg animate-in slide-in-from-right"
         >
           <span>{toast.message}</span>
           <button

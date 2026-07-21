@@ -62,7 +62,7 @@ export default function ExportsPage() {
       }));
     } else if (type === "activity") {
       const { data: cooks } = await supabase
-        .from("recipe_cooked_history")
+        .from("user_cooked_recipes")
         .select("*")
         .order("cooked_at", { ascending: false })
         .limit(500);
@@ -113,8 +113,8 @@ export default function ExportsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-bark">Reports & Export</h1>
-          <p className="mt-1 text-bark/60">Export data and generate reports</p>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">Reports & Export</h1>
+          <p className="mt-1 text-ink/60">Export data and generate reports</p>
         </div>
 
         <Card>
@@ -127,15 +127,15 @@ export default function ExportsPage() {
               {exportItems.map((item) => (
                 <div
                   key={item.type}
-                  className="flex items-center justify-between rounded-2xl bg-cream px-5 py-4"
+                  className="flex items-center justify-between rounded-2xl bg-paper px-5 py-4"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="rounded-xl bg-forest/10 p-2.5">
-                      <item.icon className="h-5 w-5 text-forest" />
+                    <div className="rounded-xl bg-tomato/10 p-2.5">
+                      <item.icon className="h-5 w-5 text-tomato" />
                     </div>
                     <div>
-                      <p className="font-medium text-bark">{item.label}</p>
-                      <p className="text-xs text-bark/40">{item.description}</p>
+                      <p className="font-medium text-ink">{item.label}</p>
+                      <p className="text-xs text-ink/40">{item.description}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -170,12 +170,12 @@ export default function ExportsPage() {
             <CardDescription>Generate a visual PDF snapshot of the current dashboard</CardDescription>
           </CardHeader>
           <CardContent>
-            <div id="export-dashboard-summary" className="mb-4 rounded-2xl bg-cream p-6">
+            <div id="export-dashboard-summary" className="mb-4 rounded-2xl bg-paper p-6">
               <div className="flex items-center gap-3 mb-4">
-                <FileText className="h-6 w-6 text-forest" />
-                <h3 className="font-heading font-semibold text-bark">Fridgenie Dashboard Summary</h3>
+                <FileText className="h-6 w-6 text-tomato" />
+                <h3 className="font-heading font-semibold text-ink-strong">Fridgenie Dashboard Summary</h3>
               </div>
-              <p className="text-sm text-bark/60">
+              <p className="text-sm text-ink/60">
                 The PDF report will capture a snapshot of your dashboard overview including key metrics, charts, and trends.
                 Navigate to the Dashboard Overview page first for the most complete report.
               </p>
@@ -195,8 +195,8 @@ export default function ExportsPage() {
           <CardContent>
             <div className="space-y-4 max-w-md">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-bark/70">Report Type</label>
-                <select className="flex h-9 w-full rounded-lg border border-forest/20 bg-white px-3 py-1 text-sm text-bark">
+                <label className="text-sm font-medium text-ink/70">Report Type</label>
+                <select className="flex h-9 w-full rounded-lg border border-tomato/20 bg-paper-card px-3 py-1 text-sm text-ink">
                   <option>Weekly Summary</option>
                   <option>User Growth Report</option>
                   <option>Item Analytics Report</option>
@@ -204,7 +204,7 @@ export default function ExportsPage() {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-bark/70">Frequency</label>
+                <label className="text-sm font-medium text-ink/70">Frequency</label>
                 <div className="flex gap-2">
                   {["daily", "weekly", "monthly"].map((f) => (
                     <Button
@@ -220,7 +220,7 @@ export default function ExportsPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-bark/70">Email Recipient</label>
+                <label className="text-sm font-medium text-ink/70">Email Recipient</label>
                 <Input
                   type="email"
                   placeholder="admin@fridgenie.app"
@@ -232,7 +232,7 @@ export default function ExportsPage() {
                 <Mail className="mr-2 h-4 w-4" />
                 {scheduleSaved ? "Saved!" : "Save Schedule"}
               </Button>
-              <p className="text-xs text-bark/30">
+              <p className="text-xs text-ink/30">
                 Note: Email delivery requires a backend cron service (e.g., Supabase Edge Functions, Vercel Cron).
                 Schedules are saved locally for now.
               </p>
