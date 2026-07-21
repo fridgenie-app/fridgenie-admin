@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Fridgenie · Admin</title>
+<link rel="icon" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --red:#b63f39; --red-accent:#c94b44; --red-light:#e7a19b;
+    --bg:#faf7f2; --cream:#f4efe7; --card:#fffdf9;
+    --text:#2b1e1b; --text-mid:#5a4742; --text-light:#8c7b75;
+    --border:rgba(140,123,117,.28); --border-strong:rgba(140,123,117,.5);
+    --shadow:0 1px 2px rgba(43,30,27,.04), 0 8px 24px rgba(43,30,27,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  h1,h2,h3,.serif{font-family:'Shippori Mincho',serif;font-weight:600;letter-spacing:-.01em}
+  a{color:var(--red);text-decoration:none}
+  .hidden{display:none!important}
+  .muted{color:var(--text-light)}
+  .mono{font-variant-numeric:tabular-nums}
+
+  /* ── Login ── */
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    box-shadow:var(--shadow);max-width:400px;width:100%;padding:40px 32px;text-align:center
+  }
+  .brand-mark{font-family:'Shippori Mincho',serif;font-size:40px;line-height:1;margin-bottom:14px}
+  .login-card h1{font-size:24px;margin:0 0 6px}
+  .login-card p{color:var(--text-mid);margin:0 0 24px;font-size:14px}
+  input[type=email]{
+    width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:10px;
+    font:inherit;background:#fff;color:var(--text);margin-bottom:12px
+  }
+  input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(182,63,57,.12)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
+    font:inherit;font-weight:600;border-radius:10px;border:1px solid transparent;
+    padding:11px 16px;transition:background .15s,border-color .15s,opacity .15s
+  }
+  .btn-primary{background:var(--red);color:#fff;width:100%}
+  .btn-primary:hover{background:var(--red-accent)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn-ghost{background:transparent;border-color:var(--border-strong);color:var(--text-mid);padding:6px 12px;font-size:13px}
+  .btn-ghost:hover{border-color:var(--red);color:var(--red)}
+  .note{font-size:13px;margin-top:16px;padding:10px 12px;border-radius:8px}
+  .note.ok{background:rgba(86,130,90,.12);color:#3f6b45}
+  .note.err{background:rgba(182,63,57,.1);color:var(--red)}
+
+  /* ── App shell ── */
+  header.topbar{
+    position:sticky;top:0;z-index:10;background:rgba(250,247,242,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px
+  }
+  .topbar .logo{font-family:'Shippori Mincho',serif;font-size:20px;font-weight:800}
+  .topbar .who{margin-left:auto;font-size:13px;color:var(--text-mid)}
+  main{max-width:1120px;margin:0 auto;padding:28px 24px 80px}
+  section.block{margin-bottom:36px}
+  section.block > h2{font-size:17px;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+  section.block > h2 .sub{font-family:'Inter';font-weight:400;font-size:12px;color:var(--text-light)}
+
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .kpi{padding:18px 18px 16px}
+  .kpi .label{font-size:12px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .kpi .value{font-family:'Shippori Mincho',serif;font-size:30px;font-weight:600;margin-top:6px;line-height:1}
+  .kpi .value small{font-size:15px;color:var(--text-light);font-family:'Inter';font-weight:500}
+
+  .chart-card{padding:18px}
+  .chart-wrap{position:relative;height:240px}
+  .two-col{grid-template-columns:1.6fr 1fr}
+  @media(max-width:820px){.two-col{grid-template-columns:1fr}}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-light);font-weight:600;white-space:nowrap}
+  tbody tr:hover{background:var(--cream)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
+  .pill.pro{background:rgba(182,63,57,.12);color:var(--red)}
+  .pill.free{background:rgba(140,123,117,.15);color:var(--text-mid)}
+  .pill.del{background:rgba(140,123,117,.2);color:var(--text-light)}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .toolbar input{margin:0;max-width:300px}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .row-actions .btn{padding:4px 9px;font-size:12px;font-weight:500}
+  .scroll{overflow-x:auto}
+  .loading{color:var(--text-light);font-size:13px;padding:18px 0}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;
+    padding:11px 18px;border-radius:10px;font-size:13.5px;box-shadow:var(--shadow);z-index:50;opacity:0;transition:opacity .2s}
+  .toast.show{opacity:1}
+  .deny{max-width:440px;margin:80px auto;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-card">
+    <div class="brand-mark">冷</div>
+    <h1>Fridgenie Admin</h1>
+    <p>Owner access only. Enter your email to receive a magic sign-in link.</p>
+    <form id="login-form">
+      <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+      <button class="btn btn-primary" id="login-btn" type="submit">Send magic link</button>
+    </form>
+    <div id="login-note" class="note hidden"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <span class="logo">Fridgenie</span>
+    <span class="muted" style="font-size:13px">Admin</span>
+    <span class="who" id="who"></span>
+    <button class="btn btn-ghost" id="refresh">Refresh</button>
+    <button class="btn btn-ghost" id="signout">Sign out</button>
+  </header>
+  <main id="dash">
+    <!-- KPIs: signups + active users -->
+    <section class="block">
+      <h2>Overview</h2>
+      <div class="grid kpis" id="kpis">
+        <div class="card kpi"><div class="label">Total signups</div><div class="value" id="k-signups">—</div></div>
+        <div class="card kpi"><div class="label">DAU</div><div class="value" id="k-dau">—</div></div>
+        <div class="card kpi"><div class="label">WAU</div><div class="value" id="k-wau">—</div></div>
+        <div class="card kpi"><div class="label">MAU</div><div class="value" id="k-mau">—</div></div>
+      </div>
+    </section>
+
+    <!-- Signups chart -->
+    <section class="block">
+      <h2>Signups <span class="sub">— last 30 days</span></h2>
+      <div class="card chart-card"><div class="chart-wrap"><canvas id="signupChart"></canvas></div></div>
+    </section>
+
+    <!-- Content usage -->
+    <section class="block">
+      <h2>Content usage</h2>
+      <div class="grid kpis" id="content">
+        <div class="card kpi"><div class="label">Pantry items</div><div class="value" id="k-pantry">—</div></div>
+        <div class="card kpi"><div class="label">Recipes generated</div><div class="value" id="k-recipes">—</div></div>
+        <div class="card kpi"><div class="label">Receipt scans</div><div class="value" id="k-receipts">—</div></div>
+        <div class="card kpi"><div class="label">Voice inputs</div><div class="value" id="k-voice">—</div></div>
+      </div>
+    </section>
+
+    <!-- AI cost -->
+    <section class="block">
+      <h2>AI cost <span class="sub">— last 30 days · all providers</span></h2>
+      <div class="grid two-col">
+        <div class="card chart-card">
+          <div class="chart-wrap"><canvas id="costChart"></canvas></div>
+        </div>
+        <div class="card" style="padding:6px 4px">
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Top users by tokens</th><th class="num">Tokens</th><th class="num">Cost</th></tr></thead>
+              <tbody id="top-users"><tr><td colspan="3" class="loading">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users -->
+    <section class="block">
+      <h2>Users</h2>
+      <div class="toolbar">
+        <input id="user-search" type="search" placeholder="Search email or name…" />
+        <span class="muted" id="user-count" style="font-size:13px"></span>
+      </div>
+      <div class="card scroll">
+        <table>
+          <thead><tr>
+            <th>Email</th><th>Signed up</th><th>Last active</th><th class="num">Items</th>
+            <th>Plan</th><th></th>
+          </tr></thead>
+          <tbody id="user-rows"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="deny" class="deny hidden card" style="padding:32px">
+    <h2 style="margin-top:0">Not authorized</h2>
+    <p class="muted">This account isn't an owner-admin. Ask Minjun to grant access, then sign in again.</p>
+    <button class="btn btn-ghost" id="deny-signout">Sign out</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="./config.js"></script>
+<script>
+const CFG = window.FRIDGENIE_CONFIG;
+const sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
+const usd = (n) => (n == null ? "—" : "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}));
+const day = (s) => s ? new Date(s+ (s.length===10?"T00:00:00":"")).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : "—";
+const ago = (s) => {
+  if(!s) return "never";
+  const d=(Date.now()-new Date(s).getTime())/86400000;
+  if(d<1) return "today"; if(d<2) return "yesterday";
+  if(d<30) return Math.floor(d)+"d ago"; return new Date(s).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+};
+let toastTimer;
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2600); }
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+$("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("email").value.trim();
+  const btn = $("login-btn"), note = $("login-note");
+  btn.disabled = true; btn.textContent = "Sending…";
+  const { error } = await sb.auth.signInWithOtp({
+    email, options: { emailRedirectTo: window.location.origin + window.location.pathname }
+  });
+  btn.disabled = false; btn.textContent = "Send magic link";
+  note.classList.remove("hidden","ok","err");
+  if (error) { note.classList.add("err"); note.textContent = error.message; }
+  else { note.classList.add("ok"); note.textContent = "Check your inbox — the link opens this dashboard."; }
+});
+
+$("signout").addEventListener("click", () => sb.auth.signOut());
+$("deny-signout").addEventListener("click", () => sb.auth.signOut());
+$("refresh").addEventListener("click", loadAll);
+
+sb.auth.onAuthStateChange((_e, session) => route(session));
+sb.auth.getSession().then(({ data }) => route(data.session));
+
+let booted = false;
+async function route(session){
+  if (session) {
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("who").textContent = session.user.email;
+    if (!booted) { booted = true; await loadAll(); }
+  } else {
+    booted = false;
+    $("app").classList.add("hidden");
+    $("login").classList.remove("hidden");
+  }
+}
+
+// ── Data load ───────────────────────────────────────────────────────────────
+let signupChart, costChart;
+async function loadAll(){
+  // Gate on admin via the first RPC; a 403/forbidden means not an owner-admin.
+  const active = await sb.rpc("admin_active_users");
+  if (active.error) {
+    if (isForbidden(active.error)) { $("dash").classList.add("hidden"); $("deny").classList.remove("hidden"); return; }
+    toast("Load error: " + active.error.message); return;
+  }
+  $("deny").classList.add("hidden"); $("dash").classList.remove("hidden");
+
+  const a = active.data && active.data[0] || {};
+  $("k-dau").textContent = fmt(a.dau); $("k-wau").textContent = fmt(a.wau);
+  $("k-mau").textContent = fmt(a.mau);
+  $("k-signups").innerHTML = fmt(a.total_users) + ' <small>total users</small>';
+
+  loadSignups(); loadContent(); loadCost(); loadTopUsers(); loadUsers();
+}
+function isForbidden(err){ return (err.code === "42501") || /forbidden/i.test(err.message||"") || err.status === 403; }
+
+async function loadSignups(){
+  const { data, error } = await sb.rpc("admin_signups_daily", { p_days: 30 });
+  if (error) return;
+  const labels = data.map(r => day(r.day));
+  const vals = data.map(r => Number(r.signups));
+  const total = vals.reduce((s,v)=>s+v,0);
+  drawLine("signupChart", labels, vals, "#b63f39", (c)=>signupChart=c, signupChart);
+  // fold 30d signup total into KPI subtitle
+  $("k-signups").innerHTML = fmt(data.reduce((s,r)=>s+Number(r.signups),0)) + ' <small>in 30d</small>';
+}
+
+async function loadContent(){
+  const { data, error } = await sb.rpc("admin_content_usage");
+  if (error || !data || !data[0]) return;
+  const c = data[0];
+  $("k-pantry").textContent = fmt(c.pantry_items);
+  $("k-recipes").textContent = fmt(c.recipes_generated);
+  $("k-receipts").textContent = fmt(c.receipt_scans);
+  $("k-voice").textContent = fmt(c.voice_inputs);
+}
+
+async function loadCost(){
+  const { data, error } = await sb.rpc("admin_ai_cost_daily", { p_days: 30 });
+  if (error) return;
+  const labels = data.map(r => day(r.day));
+  const vals = data.map(r => Number(r.cost_usd));
+  drawBars("costChart", labels, vals, (c)=>costChart=c, costChart);
+}
+
+async function loadTopUsers(){
+  const { data, error } = await sb.rpc("admin_ai_top_users", { p_days: 30, p_limit: 10 });
+  const tb = $("top-users");
+  if (error) { tb.innerHTML = '<tr><td colspan="3" class="loading">'+error.message+'</td></tr>'; return; }
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="3" class="loading">No usage yet</td></tr>'; return; }
+  tb.innerHTML = data.map(r => `<tr>
+    <td title="${esc(r.email||"")}">${esc(trunc(r.email))}</td>
+    <td class="num mono">${fmt(r.total_tokens)}</td>
+    <td class="num mono">${usd(r.cost_usd)}</td></tr>`).join("");
+}
+
+let searchTimer;
+$("user-search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(loadUsers, 300); });
+
+async function loadUsers(){
+  const q = $("user-search").value.trim();
+  const { data, error } = await sb.rpc("admin_user_list", { p_search: q || null, p_limit: 100, p_offset: 0 });
+  const tb = $("user-rows");
+  if (error) { tb.innerHTML = '<tr><td colspan="6" class="loading">'+error.message+'</td></tr>'; return; }
+  $("user-count").textContent = data.length + (data.length===100 ? "+ shown" : " users");
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="6" class="loading">No matches</td></tr>'; return; }
+  tb.innerHTML = data.map(u => {
+    const deleted = !!u.deleted_at;
+    const plan = deleted ? '<span class="pill del">deleted</span>'
+      : (u.subscription_tier==="pro" ? '<span class="pill pro">pro</span>' : '<span class="pill free">free</span>');
+    const proBtn = u.subscription_tier==="pro"
+      ? `<button class="btn btn-ghost" data-act="tier" data-user="${u.user_id}" data-tier="free">Revoke pro</button>`
+      : `<button class="btn btn-ghost" data-act="tier" data-user="${u.user_id}" data-tier="pro">Grant pro</button>`;
+    const delBtn = deleted
+      ? `<button class="btn btn-ghost" data-act="restore" data-user="${u.user_id}">Restore</button>`
+      : `<button class="btn btn-ghost" data-act="delete" data-user="${u.user_id}" data-email="${esc(u.email||"")}">Delete</button>`;
+    return `<tr>
+      <td title="${esc(u.email||"")}">${esc(u.email||"—")}${u.is_admin?' <span class="pill pro">admin</span>':''}</td>
+      <td>${day(u.created_at?u.created_at.slice(0,10):null)}</td>
+      <td>${ago(u.last_active_at)}</td>
+      <td class="num mono">${fmt(u.item_count)}</td>
+      <td>${plan}</td>
+      <td><div class="row-actions">${proBtn}${delBtn}</div></td>
+    </tr>`;
+  }).join("");
+}
+
+$("user-rows").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-act]"); if (!btn) return;
+  const user = btn.dataset.user, act = btn.dataset.act;
+  btn.disabled = true;
+  try {
+    if (act === "tier") {
+      const { error } = await sb.rpc("admin_set_tier", { p_user: user, p_tier: btn.dataset.tier });
+      if (error) throw error; toast("Tier set to " + btn.dataset.tier);
+    } else if (act === "delete") {
+      if (!confirm("Soft-delete " + (btn.dataset.email||"this user") + "? They can be restored.")) { btn.disabled=false; return; }
+      const { error } = await sb.rpc("admin_soft_delete_user", { p_user: user, p_restore: false });
+      if (error) throw error; toast("Account soft-deleted");
+    } else if (act === "restore") {
+      const { error } = await sb.rpc("admin_soft_delete_user", { p_user: user, p_restore: true });
+      if (error) throw error; toast("Account restored");
+    }
+    await loadUsers();
+  } catch (err) { toast("Error: " + (err.message||err)); btn.disabled = false; }
+});
+
+// ── Charts ──────────────────────────────────────────────────────────────────
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{display:false} },
+  scales:{
+    x:{ grid:{display:false}, ticks:{ color:"#8c7b75", maxRotation:0, autoSkip:true, maxTicksLimit:8, font:{family:"Inter",size:11} } },
+    y:{ beginAtZero:true, grid:{color:"rgba(140,123,117,.15)"}, ticks:{ color:"#8c7b75", font:{family:"Inter",size:11}, precision:0 } }
+  }
+};
+function drawLine(id, labels, data, color, set, existing){
+  if (existing) existing.destroy();
+  const ctx = $(id).getContext("2d");
+  const grad = ctx.createLinearGradient(0,0,0,240);
+  grad.addColorStop(0,"rgba(182,63,57,.18)"); grad.addColorStop(1,"rgba(182,63,57,0)");
+  set(new Chart(ctx, { type:"line", data:{ labels, datasets:[{ data, borderColor:color, backgroundColor:grad, fill:true, tension:.35, pointRadius:0, borderWidth:2 }] }, options:baseOpts }));
+}
+function drawBars(id, labels, data, set, existing){
+  if (existing) existing.destroy();
+  const ctx = $(id).getContext("2d");
+  const opts = JSON.parse(JSON.stringify(baseOpts));
+  opts.plugins.tooltip = undefined;
+  set(new Chart(ctx, { type:"bar", data:{ labels, datasets:[{ data, backgroundColor:"#c94b44", borderRadius:4, maxBarThickness:16 }] },
+    options:{ ...baseOpts, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>usd(c.parsed.y) } } } } }));
+}
+
+// ── utils ──
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function trunc(s){ s=String(s||""); return s.length>26 ? s.slice(0,24)+"…" : s; }
+</script>
+</body>
+</html>
