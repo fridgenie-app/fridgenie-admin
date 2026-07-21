@@ -26,7 +26,7 @@ export interface Database {
         Insert: Partial<Recipe>;
         Update: Partial<Recipe>;
       };
-      recipe_cooked_history: {
+      user_cooked_recipes: {
         Row: CookHistory;
         Insert: Partial<CookHistory>;
         Update: Partial<CookHistory>;
@@ -42,12 +42,15 @@ export interface Database {
 
 export interface Profile {
   id: string;
-  email: string;
-  display_name: string | null;
-  avatar_url: string | null;
+  email: string | null;
+  subscription_tier: "free" | "pro";
   is_admin: boolean;
+  deleted_at: string | null;
   created_at: string;
-  updated_at: string;
+  last_active_at: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  updated_at?: string;
 }
 
 export interface Household {
@@ -130,15 +133,43 @@ export interface DashboardMetrics {
   mau?: number;
 }
 
+export interface Overview {
+  total_users: number;
+  pro_users: number;
+  deleted_users: number;
+  dau: number;
+  wau: number;
+  mau: number;
+  households: number;
+  pantry_items: number;
+  recipes_cooked: number;
+  ai_recipes: number;
+  cost_today_usd: number;
+  cost_7d_usd: number;
+  cost_30d_usd: number;
+}
+
+export interface CostRow {
+  usage_date: string;
+  actor_type: string;
+  function: string;
+  provider: string;
+  model: string;
+  calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cost_usd: number;
+  unpriced: boolean;
+}
+
 export interface UserRow {
   id: string;
-  email: string;
-  display_name: string | null;
-  created_at: string;
+  email: string | null;
+  subscription_tier: "free" | "pro";
   is_admin: boolean;
-  household_count: number;
-  items_count: number;
-  recipes_cooked: number;
+  deleted_at: string | null;
+  created_at: string;
+  last_active_at: string | null;
 }
 
 export interface HouseholdRow {

@@ -60,9 +60,9 @@ export default function RetentionPage() {
       supabase.from("pantry_items").select("added_by").gte("created_at", day1.toISOString()),
       supabase.from("pantry_items").select("added_by").gte("created_at", day7.toISOString()),
       supabase.from("pantry_items").select("added_by").gte("created_at", day30.toISOString()),
-      supabase.from("recipe_cooked_history").select("user_id").gte("cooked_at", day1.toISOString()),
-      supabase.from("recipe_cooked_history").select("user_id").gte("cooked_at", day7.toISOString()),
-      supabase.from("recipe_cooked_history").select("user_id").gte("cooked_at", day30.toISOString()),
+      supabase.from("user_cooked_recipes").select("user_id").gte("cooked_at", day1.toISOString()),
+      supabase.from("user_cooked_recipes").select("user_id").gte("cooked_at", day7.toISOString()),
+      supabase.from("user_cooked_recipes").select("user_id").gte("cooked_at", day30.toISOString()),
     ]);
 
     const uniqueUsers = (items: { added_by?: string; user_id?: string }[] | null, cooks: { added_by?: string; user_id?: string }[] | null) => {
@@ -94,7 +94,7 @@ export default function RetentionPage() {
       .gte("created_at", new Date(now.getTime() - 30 * 86400000).toISOString());
 
     const { data: cooks } = await supabase
-      .from("recipe_cooked_history")
+      .from("user_cooked_recipes")
       .select("user_id, cooked_at")
       .gte("cooked_at", new Date(now.getTime() - 30 * 86400000).toISOString());
 
@@ -132,7 +132,7 @@ export default function RetentionPage() {
       .from("pantry_items")
       .select("added_by, created_at");
     const { data: cooks } = await supabase
-      .from("recipe_cooked_history")
+      .from("user_cooked_recipes")
       .select("user_id, cooked_at");
 
     const userActivity = new Map<string, Set<string>>();
@@ -194,8 +194,8 @@ export default function RetentionPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-bark">Retention Analytics</h1>
-          <p className="mt-1 text-bark/60">User engagement and retention metrics</p>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">Retention Analytics</h1>
+          <p className="mt-1 text-ink/60">User engagement and retention metrics</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -224,7 +224,7 @@ export default function RetentionPage() {
                   />
                   <YAxis stroke={chartColors.axis} fontSize={12} allowDecimals={false} />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Line type="monotone" dataKey="count" stroke={chartColors.forest} strokeWidth={2} dot={{ fill: chartColors.forest, r: 3 }} />
+                  <Line type="monotone" dataKey="count" stroke={chartColors.tomato} strokeWidth={2} dot={{ fill: chartColors.tomato, r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -239,32 +239,32 @@ export default function RetentionPage() {
             {cohorts === null ? (
               <Skeleton className="h-[200px] w-full" />
             ) : cohorts.length === 0 ? (
-              <p className="text-center text-bark/40 py-8">Not enough data for cohort analysis</p>
+              <p className="text-center text-ink/40 py-8">Not enough data for cohort analysis</p>
             ) : (
               <div className="overflow-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-forest/10">
-                      <th className="px-4 py-2 text-left font-medium text-bark/50">Cohort Week</th>
-                      <th className="px-4 py-2 text-right font-medium text-bark/50">Users</th>
-                      <th className="px-4 py-2 text-right font-medium text-bark/50">Week 1</th>
-                      <th className="px-4 py-2 text-right font-medium text-bark/50">Week 2</th>
-                      <th className="px-4 py-2 text-right font-medium text-bark/50">Week 3</th>
-                      <th className="px-4 py-2 text-right font-medium text-bark/50">Week 4</th>
+                    <tr className="border-b border-tomato/10">
+                      <th className="px-4 py-2 text-left font-medium text-ink/50">Cohort Week</th>
+                      <th className="px-4 py-2 text-right font-medium text-ink/50">Users</th>
+                      <th className="px-4 py-2 text-right font-medium text-ink/50">Week 1</th>
+                      <th className="px-4 py-2 text-right font-medium text-ink/50">Week 2</th>
+                      <th className="px-4 py-2 text-right font-medium text-ink/50">Week 3</th>
+                      <th className="px-4 py-2 text-right font-medium text-ink/50">Week 4</th>
                     </tr>
                   </thead>
                   <tbody>
                     {cohorts.map((c) => (
-                      <tr key={c.week} className="border-b border-forest/5">
-                        <td className="px-4 py-2 font-medium text-bark">{c.week}</td>
-                        <td className="px-4 py-2 text-right text-bark/80">{c.total}</td>
+                      <tr key={c.week} className="border-b border-tomato/5">
+                        <td className="px-4 py-2 font-medium text-ink">{c.week}</td>
+                        <td className="px-4 py-2 text-right text-ink/80">{c.total}</td>
                         {[c.week1, c.week2, c.week3, c.week4].map((val, i) => (
                           <td key={i} className="px-4 py-2 text-right">
                             <span
                               className="inline-block rounded-lg px-2 py-0.5 text-xs font-medium"
                               style={{
-                                backgroundColor: `rgba(229,57,53,${Math.max(0.05, val / 100)})`,
-                                color: val > 50 ? "white" : "#3A3A3A",
+                                backgroundColor: `rgba(182, 63, 57,${Math.max(0.05, val / 100)})`,
+                                color: val > 50 ? "white" : "#2B1E1B",
                               }}
                             >
                               {val}%

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricCard } from "@/components/ui/metric-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/lib/supabase";
-import { chartColors, tooltipStyle, GHIBLI_PALETTE } from "@/lib/chart-theme";
+import { chartColors, tooltipStyle, CHART_PALETTE } from "@/lib/chart-theme";
 import { formatDate } from "@/lib/utils";
 import { Package, AlertTriangle, Layers, TrendingUp } from "lucide-react";
 import {
@@ -131,8 +131,8 @@ export default function ItemAnalyticsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-bark">Item Analytics</h1>
-          <p className="mt-1 text-bark/60">Pantry item trends and insights</p>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">Item Analytics</h1>
+          <p className="mt-1 text-ink/60">Pantry item trends and insights</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -163,7 +163,7 @@ export default function ItemAnalyticsPage() {
                       tickFormatter={(v) => v.length > 18 ? v.slice(0, 18) + "..." : v}
                     />
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Bar dataKey="count" fill={chartColors.coral} radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="count" fill={chartColors.tomatoLight} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -178,7 +178,7 @@ export default function ItemAnalyticsPage() {
               {categoryData === null ? (
                 <Skeleton className="h-[400px] w-full" />
               ) : categoryData.length === 0 ? (
-                <div className="flex h-[400px] items-center justify-center text-bark/40">No category data</div>
+                <div className="flex h-[400px] items-center justify-center text-ink/40">No category data</div>
               ) : (
                 <ResponsiveContainer width="100%" height={400}>
                   <PieChart>
@@ -191,7 +191,7 @@ export default function ItemAnalyticsPage() {
                       label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                     >
                       {categoryData.map((_, i) => (
-                        <Cell key={i} fill={GHIBLI_PALETTE[i % GHIBLI_PALETTE.length]} />
+                        <Cell key={i} fill={CHART_PALETTE[i % CHART_PALETTE.length]} />
                       ))}
                     </Pie>
                     <Tooltip contentStyle={tooltipStyle} />
@@ -222,7 +222,7 @@ export default function ItemAnalyticsPage() {
                   />
                   <YAxis stroke={chartColors.axis} fontSize={12} />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Line type="monotone" dataKey="count" stroke={chartColors.forest} strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="count" stroke={chartColors.tomato} strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -237,13 +237,13 @@ export default function ItemAnalyticsPage() {
             {expiringItems === null ? (
               <Skeleton className="h-[200px] w-full" />
             ) : expiringItems.length === 0 ? (
-              <p className="text-center text-bark/40 py-8">No items expiring within 7 days</p>
+              <p className="text-center text-ink/40 py-8">No items expiring within 7 days</p>
             ) : (
               <div className="space-y-2">
                 {expiringItems.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between rounded-xl bg-coral/5 px-4 py-2.5">
-                    <span className="font-medium text-bark">{item.name}</span>
-                    <span className="text-sm text-coral-dark">{formatDate(item.expiry_date)}</span>
+                  <div key={i} className="flex items-center justify-between rounded-xl bg-tomato/5 px-4 py-2.5">
+                    <span className="font-medium text-ink">{item.name}</span>
+                    <span className="text-sm text-tomato-dark">{formatDate(item.expiry_date)}</span>
                   </div>
                 ))}
               </div>

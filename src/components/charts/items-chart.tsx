@@ -57,7 +57,7 @@ export function ItemsChart({ data }: ItemsChartProps) {
                   })
                 }
               />
-              <Bar dataKey="count" fill={chartColors.coral} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill={chartColors.tomatoLight} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

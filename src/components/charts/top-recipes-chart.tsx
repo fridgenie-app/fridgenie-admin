@@ -31,7 +31,7 @@ export function TopRecipesChart({ data }: TopRecipesChartProps) {
         {data === null ? (
           <Skeleton className="h-[300px] w-full" />
         ) : data.length === 0 ? (
-          <div className="flex h-[300px] items-center justify-center text-bark/40">
+          <div className="flex h-[300px] items-center justify-center text-ink/40">
             No recipe data yet
           </div>
         ) : (
@@ -47,7 +47,7 @@ export function TopRecipesChart({ data }: TopRecipesChartProps) {
                 tickFormatter={(v) => (v.length > 20 ? v.slice(0, 20) + "..." : v)}
               />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="count" fill={chartColors.forest} radius={[0, 4, 4, 0]} />
+              <Bar dataKey="count" fill={chartColors.tomato} radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

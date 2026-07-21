@@ -60,9 +60,9 @@ export function SignupChart({ data }: SignupChartProps) {
               <Line
                 type="monotone"
                 dataKey="count"
-                stroke={chartColors.forest}
+                stroke={chartColors.tomato}
                 strokeWidth={2}
-                dot={{ fill: chartColors.forest, r: 3 }}
+                dot={{ fill: chartColors.tomato, r: 3 }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

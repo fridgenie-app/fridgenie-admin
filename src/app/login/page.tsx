@@ -41,11 +41,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream p-4">
+    <div className="flex min-h-screen items-center justify-center bg-paper p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-forest/10">
-            <ChefHat className="h-9 w-9 text-forest" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-tomato/10">
+            <ChefHat className="h-9 w-9 text-tomato" />
           </div>
           <CardTitle className="text-2xl">Fridgenie Admin</CardTitle>
           <CardDescription>Sign in to access the dashboard</CardDescription>
@@ -65,17 +65,17 @@ export default function LoginPage() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-forest/10" />
+              <div className="w-full border-t border-tomato/10" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-bark/40">or continue with email</span>
+              <span className="bg-paper-card px-3 text-ink/40">or continue with email</span>
             </div>
           </div>
 
           {/* Email/Password */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-bark/70">
+              <label htmlFor="email" className="text-sm font-medium text-ink/70">
                 Email
               </label>
               <Input
@@ -88,7 +88,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-bark/70">
+              <label htmlFor="password" className="text-sm font-medium text-ink/70">
                 Password
               </label>
               <Input

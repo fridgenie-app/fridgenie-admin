@@ -1,250 +1,126 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MetricCard } from "@/components/ui/metric-card";
-import { LiveIndicator } from "@/components/ui/live-indicator";
-import { SignupChart } from "@/components/charts/signup-chart";
-import { ItemsChart } from "@/components/charts/items-chart";
-import { TopRecipesChart } from "@/components/charts/top-recipes-chart";
-import { HouseholdSizeChart } from "@/components/charts/household-size-chart";
-import { supabase } from "@/lib/supabase";
-import { useRealtime } from "@/lib/use-realtime";
-import { showToast } from "@/components/ui/toast";
-import { Users, Home, Package, ChefHat, TrendingUp, BarChart3 } from "lucide-react";
-import type { DashboardMetrics } from "@/types/database";
+import { Card, CardContent } from "@/components/ui/card";
+import { getOverview } from "@/lib/admin-api";
+import {
+  Users,
+  Crown,
+  Trash2,
+  Sunrise,
+  CalendarDays,
+  CalendarRange,
+  Home,
+  Package,
+  ChefHat,
+  Sparkles,
+  DollarSign,
+} from "lucide-react";
+import type { Overview } from "@/types/database";
+
+function formatUsd(n: number | undefined | null): string {
+  const v = typeof n === "number" ? n : 0;
+  return v.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="mb-3 font-heading text-lg font-semibold text-ink-strong">
+      {children}
+    </h2>
+  );
+}
 
 export default function OverviewPage() {
-  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
-  const [signupData, setSignupData] = useState<{ date: string; count: number }[] | null>(null);
-  const [itemsData, setItemsData] = useState<{ date: string; count: number }[] | null>(null);
-  const [topRecipes, setTopRecipes] = useState<{ name: string; count: number }[] | null>(null);
-  const [householdSizes, setHouseholdSizes] = useState<{ name: string; value: number }[] | null>(null);
+  const [data, setData] = useState<Overview | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchMetrics();
-    fetchSignupData();
-    fetchItemsData();
-    fetchTopRecipes();
-    fetchHouseholdSizes();
+    getOverview()
+      .then(setData)
+      .catch((e) => setError(e.message ?? "Failed to load overview"));
   }, []);
 
-  const handleProfileChange = useCallback(() => {
-    showToast("New user signed up!");
-    setMetrics((prev) => prev ? { ...prev, totalUsers: prev.totalUsers + 1 } : prev);
-  }, []);
-
-  const handleItemChange = useCallback(() => {
-    showToast("New item added to a pantry");
-    setMetrics((prev) => prev ? { ...prev, totalItems: prev.totalItems + 1 } : prev);
-  }, []);
-
-  const { connected: profilesConnected } = useRealtime({
-    table: "profiles",
-    event: "INSERT",
-    onRecord: handleProfileChange,
-  });
-
-  const { connected: itemsConnected } = useRealtime({
-    table: "pantry_items",
-    event: "INSERT",
-    onRecord: handleItemChange,
-  });
-
-  const liveConnected = profilesConnected || itemsConnected;
-
-  async function fetchMetrics() {
-    const [profilesRes, householdsRes, itemsRes, recipesRes] = await Promise.all([
-      supabase.from("profiles").select("id", { count: "exact", head: true }),
-      supabase.from("households").select("id", { count: "exact", head: true }),
-      supabase.from("pantry_items").select("id", { count: "exact", head: true }),
-      supabase.from("recipe_cooked_history").select("id", { count: "exact", head: true }),
-    ]);
-
-    const totalUsers = profilesRes.count ?? 0;
-    const activeHouseholds = householdsRes.count ?? 0;
-    const totalItems = itemsRes.count ?? 0;
-    const recipesCooked = recipesRes.count ?? 0;
-
-    setMetrics({
-      totalUsers,
-      activeHouseholds,
-      totalItems,
-      recipesCooked,
-      avgItemsPerHousehold: activeHouseholds > 0 ? totalItems / activeHouseholds : 0,
-      avgRecipesPerUser: totalUsers > 0 ? recipesCooked / totalUsers : 0,
-    });
-  }
-
-  async function fetchSignupData() {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data } = await supabase
-      .from("profiles")
-      .select("created_at")
-      .gte("created_at", thirtyDaysAgo.toISOString())
-      .order("created_at")
-      .returns<{ created_at: string }[]>();
-
-    if (!data) {
-      setSignupData([]);
-      return;
-    }
-
-    const grouped = new Map<string, number>();
-    for (let i = 0; i <= 30; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() - (30 - i));
-      grouped.set(d.toISOString().split("T")[0], 0);
-    }
-    data.forEach((p) => {
-      const day = p.created_at.split("T")[0];
-      grouped.set(day, (grouped.get(day) ?? 0) + 1);
-    });
-
-    setSignupData(
-      Array.from(grouped.entries()).map(([date, count]) => ({ date, count }))
-    );
-  }
-
-  async function fetchItemsData() {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data } = await supabase
-      .from("pantry_items")
-      .select("created_at")
-      .gte("created_at", thirtyDaysAgo.toISOString())
-      .order("created_at")
-      .returns<{ created_at: string }[]>();
-
-    if (!data) {
-      setItemsData([]);
-      return;
-    }
-
-    const grouped = new Map<string, number>();
-    for (let i = 0; i <= 30; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() - (30 - i));
-      grouped.set(d.toISOString().split("T")[0], 0);
-    }
-    data.forEach((item) => {
-      const day = item.created_at.split("T")[0];
-      grouped.set(day, (grouped.get(day) ?? 0) + 1);
-    });
-
-    setItemsData(
-      Array.from(grouped.entries()).map(([date, count]) => ({ date, count }))
-    );
-  }
-
-  async function fetchTopRecipes() {
-    const { data } = await supabase
-      .from("recipe_cooked_history")
-      .select("recipe_title")
-      .returns<{ recipe_title: string }[]>();
-
-    if (!data) {
-      setTopRecipes([]);
-      return;
-    }
-
-    const counts = new Map<string, number>();
-    data.forEach((r) => {
-      const title = r.recipe_title || "Untitled";
-      counts.set(title, (counts.get(title) ?? 0) + 1);
-    });
-
-    const sorted = Array.from(counts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([name, count]) => ({ name, count }));
-
-    setTopRecipes(sorted);
-  }
-
-  async function fetchHouseholdSizes() {
-    const { data } = await supabase
-      .from("households")
-      .select("id, household_members(count)")
-      .returns<{ id: string; household_members: { count: number }[] }[]>();
-
-    if (!data) {
-      setHouseholdSizes([]);
-      return;
-    }
-
-    const sizeMap = new Map<string, number>();
-    data.forEach((h) => {
-      const memberCount = h.household_members?.[0]?.count ?? 1;
-      const label = memberCount >= 5 ? "5+" : String(memberCount);
-      sizeMap.set(label + " member" + (memberCount !== 1 ? "s" : ""), (sizeMap.get(label + " member" + (memberCount !== 1 ? "s" : "")) ?? 0) + 1);
-    });
-
-    setHouseholdSizes(
-      Array.from(sizeMap.entries())
-        .map(([name, value]) => ({ name, value }))
-        .sort((a, b) => a.name.localeCompare(b.name))
-    );
-  }
+  const num = (v: keyof Overview): number | null =>
+    data ? Number(data[v] ?? 0) : null;
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-heading text-3xl font-bold text-bark">Dashboard Overview</h1>
-            <p className="mt-1 text-bark/60">
-              Key metrics and analytics for Fridgenie
-            </p>
+        <div>
+          <h1 className="font-heading text-3xl font-bold text-ink-strong">
+            Dashboard Overview
+          </h1>
+          <p className="mt-1 text-ink/60">
+            Key metrics and AI spend for Fridgenie
+          </p>
+        </div>
+
+        {error && (
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-sm text-tomato">
+                Could not load overview: {error}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        <section>
+          <SectionTitle>Users</SectionTitle>
+          <div className="grid gap-4 md:grid-cols-3">
+            <MetricCard title="Total Users" value={num("total_users")} icon={Users} />
+            <MetricCard title="Pro Users" value={num("pro_users")} icon={Crown} />
+            <MetricCard title="Deleted" value={num("deleted_users")} icon={Trash2} />
           </div>
-          <LiveIndicator connected={liveConnected} />
-        </div>
+        </section>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <MetricCard
-            title="Total Users"
-            value={metrics?.totalUsers ?? null}
-            icon={Users}
-          />
-          <MetricCard
-            title="Households"
-            value={metrics?.activeHouseholds ?? null}
-            icon={Home}
-          />
-          <MetricCard
-            title="Items Tracked"
-            value={metrics?.totalItems ?? null}
-            icon={Package}
-          />
-          <MetricCard
-            title="Recipes Cooked"
-            value={metrics?.recipesCooked ?? null}
-            icon={ChefHat}
-          />
-          <MetricCard
-            title="Avg Items/Household"
-            value={metrics?.avgItemsPerHousehold ?? null}
-            icon={TrendingUp}
-          />
-          <MetricCard
-            title="Avg Recipes/User"
-            value={metrics?.avgRecipesPerUser ?? null}
-            icon={BarChart3}
-          />
-        </div>
+        <section>
+          <SectionTitle>Active Users</SectionTitle>
+          <div className="grid gap-4 md:grid-cols-3">
+            <MetricCard title="DAU" value={num("dau")} icon={Sunrise} description="Daily active" />
+            <MetricCard title="WAU" value={num("wau")} icon={CalendarDays} description="Weekly active" />
+            <MetricCard title="MAU" value={num("mau")} icon={CalendarRange} description="Monthly active" />
+          </div>
+        </section>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <SignupChart data={signupData} />
-          <ItemsChart data={itemsData} />
-        </div>
+        <section>
+          <SectionTitle>Content</SectionTitle>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <MetricCard title="Households" value={num("households")} icon={Home} />
+            <MetricCard title="Pantry Items" value={num("pantry_items")} icon={Package} />
+            <MetricCard title="Recipes Cooked" value={num("recipes_cooked")} icon={ChefHat} />
+            <MetricCard title="AI Recipes" value={num("ai_recipes")} icon={Sparkles} />
+          </div>
+        </section>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <TopRecipesChart data={topRecipes} />
-          <HouseholdSizeChart data={householdSizes} />
-        </div>
+        <section>
+          <SectionTitle>AI Spend</SectionTitle>
+          <div className="grid gap-4 md:grid-cols-3">
+            <MetricCard
+              title="Today"
+              value={data ? formatUsd(data.cost_today_usd) : null}
+              icon={DollarSign}
+            />
+            <MetricCard
+              title="Last 7 days"
+              value={data ? formatUsd(data.cost_7d_usd) : null}
+              icon={DollarSign}
+            />
+            <MetricCard
+              title="Last 30 days"
+              value={data ? formatUsd(data.cost_30d_usd) : null}
+              icon={DollarSign}
+            />
+          </div>
+        </section>
       </div>
     </DashboardLayout>
   );

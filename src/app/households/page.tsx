@@ -50,7 +50,7 @@ export default function HouseholdsPage() {
             .select("id", { count: "exact", head: true })
             .eq("household_id", h.id),
           supabase
-            .from("recipe_cooked_history")
+            .from("user_cooked_recipes")
             .select("id", { count: "exact", head: true })
             .eq("household_id", h.id),
         ]);
@@ -95,8 +95,8 @@ export default function HouseholdsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-bark">Households</h1>
-            <p className="mt-1 text-bark/60">
+            <h1 className="font-heading text-3xl font-bold text-ink-strong">Households</h1>
+            <p className="mt-1 text-ink/60">
               View all Fridgenie households and their activity
             </p>
           </div>
@@ -110,7 +110,7 @@ export default function HouseholdsPage() {
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-bark/40" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
                 <Input
                   placeholder="Search households..."
                   value={search}
@@ -118,7 +118,7 @@ export default function HouseholdsPage() {
                   className="pl-9"
                 />
               </div>
-              <span className="text-sm text-bark/60">
+              <span className="text-sm text-ink/60">
                 {filtered?.length ?? 0} households
               </span>
             </div>
@@ -144,14 +144,14 @@ export default function HouseholdsPage() {
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-bark/40">
+                      <TableCell colSpan={5} className="text-center text-ink/40">
                         No households found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filtered.map((h) => (
                       <TableRow key={h.id}>
-                        <TableCell className="font-medium text-bark">
+                        <TableCell className="font-medium text-ink">
                           {h.name}
                         </TableCell>
                         <TableCell>{formatDate(h.created_at)}</TableCell>
